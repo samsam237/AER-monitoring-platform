@@ -1,0 +1,333 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+}
+
+a{
+    color: black;
+    text-decoration: none;
+}
+
+main{
+    padding: 25px;
+}
+
+header{
+    position: relative;
+}
+
+.header{
+    background-color: aquamarine;
+}
+
+.header1, .header2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 30px;
+    color: #fff;
+}
+
+.header{
+    background-color: green;
+}
+.header2{
+    border-bottom-right-radius: 15px;
+}
+
+.header2::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 20px;
+    height: 100%; 
+    background-color: red;
+    border-bottom-right-radius: 15px;
+}
+
+.header2::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 20px; 
+    height: 50%;
+    background-color: yellow;
+    border-bottom-right-radius: 15px;
+}
+
+.header1 .header1-left,
+.header2 .left {
+    flex: 1;
+}
+
+.header1 .header1-right,
+.header2 .right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header2 .center {
+    flex: 2;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.platform-logo {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+.platform-logo:hover{
+    cursor: pointer;
+    height: 40px; width: 40px;
+    border-radius: 5px;
+}
+
+
+/* Style général pour tous les boutons */
+.btn {
+    padding: 10px 20px; /* Donne un padding autour du texte pour augmenter la taille du bouton */
+    border: none; /* Retire la bordure par défaut */
+    border-radius: 5px; /* Coins arrondis */
+    font-size: 16px; /* Taille de la police */
+    color: white; /* Texte en blanc */
+    cursor: pointer; /* Curseur en forme de main pour montrer que c'est cliquable */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Effet de transition pour les interactions */
+}
+
+/* Style spécifique pour le bouton vert */
+.btn-green {
+    background-color: #28a745; /* Fond vert */
+}
+
+/* Effet au survol du bouton */
+.btn-green:hover {
+    background-color: #218838; /* Un vert plus foncé au survol */
+    transform: translateY(-2px); /* Légère élévation du bouton lors du survol */
+}
+
+/* Effet au clic du bouton */
+.btn-green:active {
+    background-color: #1e7e34; /* Un vert encore plus foncé quand le bouton est enfoncé */
+    transform: translateY(0); /* Remet le bouton dans sa position initiale */
+}
+
+/* Optionnel: effet de focus pour l'accessibilité */
+.btn:focus {
+    outline: none; /* Retirer le contour de focus */
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.5); /* Ajouter un halo vert lors du focus */
+}
+
+/* Style de base pour tous les liens */
+.link {
+    font-size: 16px; /* Taille de la police */
+    color: #ecf9ef; /* Couleur du lien (vert) */
+    text-decoration: none; /* Enlève la décoration de texte par défaut (souligné) */
+    padding: 8px 16px; /* Ajoute un peu de padding autour du texte pour un effet bouton */
+    border-radius: 5px; /* Coins arrondis */
+    display: inline-block; /* Permet de gérer le padding et l'élévation comme un bouton */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Effet de transition pour les interactions */
+}
+
+/* Effet au survol du lien */
+.link-green:hover {
+    background-color: #218838; /* Un vert plus foncé au survol */
+    color: white; /* Change la couleur du texte en blanc */
+    transform: translateY(-2px); /* Légère élévation du lien au survol */
+}
+
+/* Effet au clic sur le lien */
+.link-green:active {
+    background-color: #1e7e34; /* Un vert encore plus foncé au clic */
+    transform: translateY(0); /* Remet le lien dans sa position initiale */
+}
+
+/* Optionnel: effet de focus pour l'accessibilité */
+.link:focus {
+    outline: none; /* Retirer le contour de focus par défaut */
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.5); /* Halo vert autour du lien lors du focus */
+}
+
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown button {
+    background: #444;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background: #fff;
+    min-width: 120px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: #222;
+    padding: 10px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.user-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.search-input {
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.lang-select {
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+/* Simple background slider */
+.background-slider {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+}
+
+.background-slider img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.background-slider img.active {
+    opacity: 1;
+}
+
+.register-container, .login-container {
+    margin-left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+}
+.register-container form input, .login-container form input{
+    padding: 10px; margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.3s;
+}
+.register-container form input:focus, .login-container form input:focus{
+    border-color: #007bff;
+    outline: none;
+}
+.register-container form button, .login-container form button {
+    padding: 10px; margin: 5px;
+    background-color: #007bff;
+    color: white; border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 50%; transform: translateX(-50%);
+}
+
+.user-form-link{
+    color: #444; text-decoration: wavy;
+}
+
+/* Style global pour les containers */
+.register-container, .login-container {
+    background: #f5f5f5; /* Fond clair */
+    padding: 30px; /* Un peu d'espace autour du formulaire */
+    max-width: 400px; /* Largeur maximale pour un bon design */
+    border-radius: 10px; /* Coins arrondis pour plus de douceur */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Ombre légère */
+    text-align: center;
+}
+
+/* Titre (h2) */
+.register-container h2, .login-container h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Styles pour les erreurs */
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+/* Style général pour les formulaires */
+.user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espacement entre les éléments */
+}
+
+/* Style des inputs */
+.user-form input {
+    padding: 10px;
+    border: 1px solid #ccc; /* Bordure fine */
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s ease; /* Transition sur focus */
+}
+
+.user-form input:focus {
+    border-color: #28a745; /* Bordure verte au focus */
+    outline: none; /* Enlève le contour par défaut */
+}
+
+/* Style des boutons */
+.user-form button {
+    background-color: #28a745; /* Fond vert */
+    color: white; /* Texte blanc */
+    border: none;
+    padding: 12px 0;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.user-form button:hover {
+    background-color: #218838; /* Vert plus foncé au survol */
+}
+
+/* Style du lien de connexion */
+.user-form-link {
+    color: #007bff; /* Couleur bleue pour le lien */
+    text-decoration: none; /* Enlever le souligné */
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.user-form-link:hover {
+    color: #0056b3; /* Bleu plus foncé au survol */
+}

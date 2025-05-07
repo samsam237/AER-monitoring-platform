@@ -1,0 +1,50 @@
+<header class="header2 header">
+    <div class="left">
+        <span class="platform-logo" onclick="redirectTo('/')">
+            <img src="/images/logo AER.jpg" alt="AER" class="platform-logo" style="height: 40px; width: 40px; border-radius: 5%;">
+        </span>
+    </div>
+    <div class="center">
+        <!-- <div class="dropdown">
+            <button>Plants</button>
+            <div class="dropdown-content">
+                <a href="#">Phase 1</a>
+                <a href="#">Phase 2</a>
+            </div>
+        </div> -->
+        <!-- <div class="dropdown">
+            <button>Alarmes</button>
+            <div class="dropdown-content">
+                <a href="#">Alarme 1</a>
+                <a href="#">Alarme 2</a>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button>Sites</button>
+            <div class="dropdown-content">
+                <a href="#">Site 1</a>
+                <a href="#">Site 2</a>
+            </div>
+        </div> -->
+
+        <button class="btn btn-green" onclick="redirectTo('/')">
+            Home
+        </button>
+
+        <button class="btn btn-green" onclick="redirectTo('/alarmes')">
+            Alarmes
+        </button>
+           
+        <button class="btn btn-green" onclick="redirectTo('/sites')">
+            Sites
+        </button>
+
+    </div>
+    <div class="right">
+        <% if (user) { %>
+            <a class="link link-green" href="/logout">Déconnexion</a>
+        <% } else { %>
+            <a class="link link-green" href="/login">Connexion</a>
+        <% } %>
+    </div>
+</header>

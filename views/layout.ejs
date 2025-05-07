@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Surveillance Panneau Solaire</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <%- include('partials/header1', { user: user }) %>
+        <%- include('partials/header2', { user: user }) %>
+    </header>
+    <main>
+        <%- body %>
+    </main>
+    <script>
+        function redirectTo(url){
+            window.location.href = url
+        }
+    </script>
+</body>
+</html>

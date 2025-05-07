@@ -1,0 +1,22 @@
+<div class="background-slider">
+    <!-- Add your background images slider here -->
+     <img src="/images/img 3.jpg" alt="img1" class="active">
+     <img src="/images/img 4.jpg" alt="img2" >
+</div>
+<section class="app-info">
+    <h1>Bienvenue sur la plateforme de surveillance de panneaux solaires</h1>
+    <p>Informations de l'application...</p>
+</section>
+
+<script>
+    const sliderContent = document.querySelectorAll(".background-slider img");
+    let actualSlide = 0;
+
+    setInterval(() => {
+        sliderContent[actualSlide].classList.remove('active');
+
+        actualSlide = (actualSlide + 1) % sliderContent.length;
+
+        sliderContent[actualSlide].classList.add('active');
+    }, 3000);
+</script>
