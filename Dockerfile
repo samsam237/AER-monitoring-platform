@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000 5050
 
 # Commande de démarrage de l'app
-CMD ["node", "src/index.js"]
+CMD ["node", "index.js"]
