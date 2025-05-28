@@ -3,6 +3,13 @@ const session = require('express-session');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts'); // Add this line
 
+const admin = require('firebase-admin');
+const serviceAccount = require('./firebaseServiceAccountKey.json');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -53,9 +60,30 @@ function addUser(user) {
     saveUsers(users);
 }
 
+function authenticateFirebaseToken(req, res, next) {
+    const idToken = req.headers.authorization && req.headers.authorization.split('Bearer ')[1];
+    console.log (`idToken - ${req.headers.authorization}`)
+    req.user = null;
+    if (!idToken) {
+        console.log (`user - `)
+        return next();
+        //return res.status(401).send('No token provided');
+    }
+    admin.auth().verifyIdToken(idToken)
+        .then((decodedToken) => {
+            req.user = decodedToken;
+            console.log (`user - ${req.user}`)
+            next();
+        })
+        .catch((error) => {
+            //res.status(401).send('Unauthorized');
+            next ();
+        });
+}
+
 // Authentication routes
-app.get('/login', (req, res) => {
-    res.render('pages/login', { user:null ,error: null });
+app.get('/login', authenticateFirebaseToken, (req, res) => {
+    res.render('pages/login', { user:req.user ? req.user.email : null ,error: null });
 });
 
 app.post('/login', (req, res) => {
@@ -69,8 +97,8 @@ app.post('/login', (req, res) => {
     }
 });
 
-app.get('/register', (req, res) => {
-    res.render('pages/register', { user:null, error: null });
+app.get('/register', authenticateFirebaseToken, (req, res) => {
+    res.render('pages/register', { user:req.user ? req.user : null ,error: null });
 });
 
 app.post('/register', (req, res) => {
@@ -96,26 +124,26 @@ app.get('/logout', (req, res) => {
 });
 
 // Home route
-app.get('/', (req, res) => {
-    res.render('pages/home', { user: req.session.user });
+app.get('/', authenticateFirebaseToken, (req, res) => {
+    res.render('pages/home', { user:req.user ? req.user : null ,error: null });
 });
 
 // Phases route
-app.get('/phases', (req, res) => {
+app.get('/phases', authenticateFirebaseToken, (req, res) => {
     // Replace with real data
-    res.render('pages/phases', { user: req.session.user, phases: ['Phase 1', 'Phase 2'] });
+    res.render('pages/phases', { user:req.user ? req.user : null, phases: ['Phase 1', 'Phase 2'] });
 });
 
 // Alarms route
 app.get('/alarmes', (req, res) => {
     // Replace with real data
-    res.render('pages/alarmes', { user: req.session.user, alarmes: ['Alarme 1', 'Alarme 2'] });
+    res.render('pages/alarmes', { user:req.user ? req.user : null, alarmes: ['Alarme 1', 'Alarme 2'] });
 });
 
 // Sites route
 app.get('/sites', (req, res) => {
     // Replace with real data
-    res.render('pages/sites', { user: req.session.user, sites: ['Site 1', 'Site 2'] });
+    res.render('pages/sites', { user:req.user ? req.user : null, sites: ['Site 1', 'Site 2'] });
 });
 
 const PORT = process.env.PORT || 3000;

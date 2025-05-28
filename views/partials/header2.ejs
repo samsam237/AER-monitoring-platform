@@ -31,16 +31,20 @@
             Home
         </button>
 
-        <button class="btn btn-green" onclick="redirectTo('/alarmes')">
+        <button class="btn btn-green" onclick="redirectTo('/sites')">
+            Sites
+        </button>
+
+        <!-- <button class="btn btn-green" onclick="redirectTo('/alarmes')">
             Alarmes
         </button>
            
         <button class="btn btn-green" onclick="redirectTo('/sites')">
             Sites
-        </button>
+        </button> -->
 
     </div>
-    <div class="right">
+    <div class="right" id="auth-links">
         <% if (user) { %>
             <a class="link link-green" href="/logout">Déconnexion</a>
         <% } else { %>

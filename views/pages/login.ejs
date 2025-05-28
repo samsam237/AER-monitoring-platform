@@ -3,11 +3,12 @@
     <% if (error) { %>
         <p style="color:red;"><%= error %></p>
     <% } %>
-    <form method="POST" action="/login" class="user-form">
-        <input type="text" name="username" placeholder="Nom d'utilisateur" required><br>
-        <input type="password" name="password" placeholder="Mot de passe" required><br>
-        <button type="submit">Se connecter</button>
+    <form class="user-form" id="login-form">
+        <input id="input_username" type="text" name="username" placeholder="Nom d'utilisateur" required><br>
+        <input id="input_password" type="password" name="password" placeholder="Mot de passe" required><br>
+        <button type="submit" id="login-button">Se connecter</button>
 
-        <a href="/register" class="user-form-link">s'enreigistrer</a>
+        <!-- <a href="/register" class="user-form-link" id="login-button-user-form-link">s'enreigistrer</a> -->
     </form>
 </div>
+
