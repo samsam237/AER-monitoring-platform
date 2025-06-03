@@ -146,6 +146,27 @@ app.get('/sites', (req, res) => {
     res.render('pages/sites', { user:req.user ? req.user : null, sites: ['Site 1', 'Site 2'] });
 });
 
+app.get('/site/:siteName/data', authenticateFirebaseToken, (req, res) => {
+    const siteName = req.params.siteName;
+    //const jsonData = getDataForSite(siteName); // ta logique de récupération de données
+    //const jsonData = [{ nom: "Site A", valeur: 42 }, { nom: "Site B", valeur: 19 }];
+    
+    res.render('pages/site_data', { user:req.user ? req.user : null, siteName });
+});
+
+app.get('/api/site/:siteName/data', authenticateFirebaseToken, async (req, res) => {
+    const siteName = req.params.siteName;
+  
+    // Simule des données — à remplacer par une vraie source (Firebase, MongoDB, etc.)
+    const fakeData = [
+      { date: '2024-01-01', temperature: 25, pression: 1012 },
+      { date: '2024-01-02', temperature: 27, pression: 1015 },
+      // ...
+    ];
+  
+    res.json({user:req.user ? req.user : null, data:fakeData});
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);

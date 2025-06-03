@@ -5,8 +5,85 @@
 </div>
 <section class="app-info">
     <h1>Bienvenue sur la plateforme de surveillance de panneaux solaires</h1>
-    <p>Informations de l'application...</p>
+    <p>
+        Cette plateforme a été conçue pour renforcer l'efficacité et la durabilité des installations solaires dans les zones rurales du Cameroun.
+        Elle permet aux techniciens, gestionnaires de projets, et communautés locales de suivre en temps réel la performance des panneaux solaires installés.
+    </p>
+    <ul>
+        <li>📊 <strong>Suivi en temps réel</strong> des niveaux de production d’énergie</li>
+        <li>🔧 <strong>Alertes automatiques</strong> en cas de dysfonctionnement ou de baisse de performance</li>
+        <li>📍 <strong>Cartographie des installations</strong> sur l'ensemble du territoire</li>
+        <li>🧑‍🤝‍🧑 <strong>Accès dédié</strong> pour les techniciens, communautés et responsables de l’AER</li>
+        <li>📁 <strong>Rapports automatiques</strong> générés pour l’analyse et la prise de décision</li>
+    </ul>
+    <p>
+        Ce projet s’inscrit dans la mission de l’<strong>Agence d’Électrification Rurale (AER)</strong> de garantir un accès durable à l’électricité dans les zones reculées du Cameroun à travers les énergies renouvelables.
+    </p>
 </section>
+
+<style>
+    .app-info {
+    background-color: rgba(255, 255, 255, 0.85); /* légère transparence sur fond clair */
+    padding: 40px 60px;
+    max-width: 900px;
+    margin: 60px auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #2c3e50;
+    line-height: 1.8;
+}
+
+.app-info h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #00796B; /* teinte émeraude, évoquant l'énergie renouvelable */
+    text-align: center;
+}
+
+.app-info p {
+    font-size: 1.1em;
+    margin-bottom: 20px;
+    text-align: justify;
+}
+
+.app-info ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 30px 0;
+}
+
+.app-info ul li {
+    padding: 10px 0;
+    font-size: 1.05em;
+    display: flex;
+    align-items: center;
+}
+
+.app-info ul li::before {
+    content: "✔";
+    margin-right: 10px;
+    color: #388E3C;
+    font-weight: bold;
+}
+
+.btn-primary {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 12px 24px;
+    background-color: #00796B;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #004D40;
+}
+
+</style>
 
 <script>
     const sliderContent = document.querySelectorAll(".background-slider img");
