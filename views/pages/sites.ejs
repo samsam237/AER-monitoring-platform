@@ -1,6 +1,10 @@
 <!-- <h2>Sites</h2> -->
 <div class="sites-card-container">
-    <div class="site-card" onclick="selectSite('posthog')">
+    <div class="site-card add-site-button" onclick="openNewSitePopup()">
+      <h1>+ </h1>      
+    </div>  
+  
+    <!-- <div class="site-card" onclick="selectSite('posthog')">
         <h3>posthog</h3>
         <div class="site-actions">
             <button onclick="openConfigPopup('posthog')">Configurer</button>
@@ -14,23 +18,38 @@
             <button onclick="openConfigPopup('posthog')">Configurer</button>
             <button onclick="redirectToView('posthog')">Visualiser</button>
         </div>
-    </div>
+    </div> -->
 </div>
 
 <!-- Popup de configuration -->
-<div id="configModal" class="modal">
+<!-- <div id="configModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeConfigPopup()">&times;</span>
       <h3>Configuration du site</h3>
   
-      <div id="configFields">
+      <div id="configFields"> -->
         <!-- Champs dynamiques ajoutés ici -->
-      </div>
+      <!-- </div>
   
       <button onclick="addConfigField()">Ajouter une paire</button>
       <button onclick="submitConfig()">Enregistrer</button>
     </div>
+</div> -->
+
+<div id="configModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeConfigPopup()">&times;</span>
+    <h3 id="modalTitle">Configuration du site</h3>
+
+    <input type="text" class="site-name" id="siteNameInput" placeholder="Nom du site">
+
+    <div id="configFields"></div>
+
+    <button onclick="addConfigField()">Ajouter une paire</button>
+    <button onclick="submitConfig()">Enregistrer</button>
+  </div>
 </div>
+
 
 <style>
     /* Fond semi-transparent */
@@ -95,13 +114,23 @@
       flex-wrap: wrap;
     }
   
-    .config-row input {
+    .config-row input, .site-name {
       flex: 1;
       padding: 10px;
       font-size: 15px;
       border-radius: 6px;
       border: 1px solid #ccc;
       background-color: white;
+    }
+
+    .site-name{
+      flex: 2;
+      padding: 10px;
+      font-size: 15px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background-color: #cca;
+      margin-bottom: 10px;
     }
   
     /* Bouton supprimer une ligne */
@@ -207,6 +236,13 @@
     .site-actions button:hover {
       background-color: #2980b9;
     }
+
+    .add-site-button {
+      font-weight: bold;
+      color: #1a237e; 
+      text-align: center;
+    }
+
 </style>
 
 <script>
@@ -222,49 +258,207 @@
       alert("Visualiser les données de " + name);
     }
 </script>
+
 <script>
-    function openConfigPopup(siteName) {
-      document.getElementById('configModal').style.display = 'block';
-      document.getElementById('configFields').innerHTML = ''; // reset
-      addConfigField(); // start with one field
+  let currentSiteName = null;
+
+  function openConfigPopup(siteName) {
+    currentSiteName = siteName;
+    document.getElementById('configModal').style.display = 'block';
+    document.getElementById('configFields').innerHTML = '';
+    document.getElementById('siteNameInput').value = siteName || '';
+    document.getElementById('siteNameInput').disabled = !!siteName;
+
+    if (!siteName) {
+      addConfigField(); // nouveau site, vide
+      return;
     }
-  
-    function closeConfigPopup() {
-      document.getElementById('configModal').style.display = 'none';
+
+    // Site existant : charger sa config
+    fetch(`/sites/getAdd/${siteName}`)
+      .then(res => res.json())
+      .then(site => {
+        (site.config || []).forEach(({ key, value }) => {
+          const row = document.createElement('div');
+          row.className = 'config-row';
+          row.innerHTML = `
+            <input type="text" placeholder="Identifiant" value="${key}">
+            <input type="text" placeholder="Valeur" value="${value}">
+            <button onclick="this.parentElement.remove()">✖</button>
+          `;
+          document.getElementById('configFields').appendChild(row);
+        });
+      })
+      .catch(() => addConfigField());
+  }
+
+  /* let currentSite = null;
+
+  function openConfigPopup(siteName) {
+    document.getElementById('configModal').style.display = 'block';
+    document.getElementById('configFields').innerHTML = ''; // reset
+
+    if (!siteName) {
+      addConfigField(); // nouveau site, on part de zéro
+      return;
     }
-  
-    function addConfigField() {
-      const container = document.getElementById('configFields');
-      const row = document.createElement('div');
-      row.className = 'config-row';
-  
-      row.innerHTML = `
-        <input type="text" placeholder="Identifiant">
-        <input type="text" placeholder="Valeur">
-        <button onclick="this.parentElement.remove()">✖</button>
-      `;
-  
-      container.appendChild(row);
-    }
-  
-    function submitConfig() {
-      const rows = document.querySelectorAll('#configFields .config-row');
-      const data = [];
-  
-      rows.forEach(row => {
-        const inputs = row.querySelectorAll('input');
-        const key = inputs[0].value.trim();
-        const value = inputs[1].value.trim();
-        if (key && value) data.push({ key, value });
+
+    // 🔄 Charger la config existante du site
+    fetch(`/sites/getAdd/${siteName}`)
+      .then(res => res.json())
+      .then(site => {
+        if (site.config && site.config.length > 0) {
+          site.config.forEach(({ key, value }) => {
+            const row = document.createElement('div');
+            row.className = 'config-row';
+            row.innerHTML = `
+              <input type="text" placeholder="Identifiant" value="${key}">
+              <input type="text" placeholder="Valeur" value="${value}">
+              <button onclick="this.parentElement.remove()">✖</button>
+            `;
+            document.getElementById('configFields').appendChild(row);
+          });
+        } else {
+          addConfigField(); // aucune config => un champ vide
+        }
+      })
+      .catch(err => {
+        console.error("Erreur lors de la récupération de la configuration :", err);
+        addConfigField(); // en cas d'erreur on propose un champ vide
       });
-  
-      console.log("Configuration soumise :", data);
-      closeConfigPopup();
-      // TODO: envoyer au serveur via fetch/ajax
+  }
+ */
+  function closeConfigPopup() {
+    document.getElementById('configModal').style.display = 'none';
+  }
+
+  function addConfigField() {
+    const container = document.getElementById('configFields');
+    const row = document.createElement('div');
+    row.className = 'config-row';
+
+    row.innerHTML = `
+      <input type="text" placeholder="Identifiant">
+      <input type="text" placeholder="Valeur">
+      <button onclick="this.parentElement.remove()">✖</button>
+    `;
+
+    container.appendChild(row);
+  }
+
+  function submitConfig() {
+    const siteName = document.getElementById('siteNameInput').value.trim();
+    if (!siteName) return alert("Le nom du site est requis");
+
+    const rows = document.querySelectorAll('#configFields .config-row');
+    const config = [];
+
+    rows.forEach(row => {
+      const inputs = row.querySelectorAll('input');
+      const key = inputs[0].value.trim();
+      const value = inputs[1].value.trim();
+      if (key && value) config.push({ key, value });
+    });
+
+    fetch('/sites/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ siteName, config })
+    })
+      .then(res => res.json())
+      .then(data => {
+        alert('Site enregistré !');
+        closeConfigPopup();
+        location.reload(); // Recharge pour voir le nouveau site
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Erreur lors de l\'enregistrement');
+      });
+  }
+
+  /* function submitConfig() {
+    const rows = document.querySelectorAll('#configFields .config-row');
+    const config = [];
+
+    rows.forEach(row => {
+      const inputs = row.querySelectorAll('input');
+      const key = inputs[0].value.trim();
+      const value = inputs[1].value.trim();
+      if (key && value) config.push({ key, value });
+    });
+
+    console.log(`${currentSite} - ${config}`)
+
+    if (!currentSite) {
+      alert("Aucun site sélectionné.");
+      return;
     }
+
+    fetch('/sites/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        siteName: currentSite,
+        config
+      })
+    })
+      .then(res => res.json())
+      .then(response => {
+        console.log("Réponse serveur:", response);
+        alert("Configuration enregistrée !");
+        closeConfigPopup();
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Erreur lors de l'enregistrement.");
+      });
+    closeConfigPopup();
+    // TODO: envoyer au serveur via fetch/ajax
+  }
+ */
   
-    function redirectToView(siteName) {
-      window.location.href = `/site/${encodeURIComponent(siteName)}/data`;
-    }
+  function redirectToView(siteName) {
+    window.location.href = `/site/${encodeURIComponent(siteName)}/data`;
+  }
 </script>
-  
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    fetch('/sites/getAdd')
+      .then(response => response.json())
+      .then(sites => {
+        const container = document.querySelector('.sites-card-container');
+        /* container.innerHTML = ''; // on vide d’abord
+
+        container.innerHTML = `
+          <div class="site-card" onclick="openNewSitePopup()">
+            <h1>+ </h1> <h3> Ajouter un site</h3>      
+          </div>  
+        ` */
+        
+        sites.forEach(site => {
+          const card = document.createElement('div');
+          card.className = 'site-card';
+          card.onclick = () => selectSite(site.siteName);
+
+          card.innerHTML = `
+            <h3>${site.siteName}</h3>
+            <div class="site-actions">
+              <button onclick="event.stopPropagation(); openConfigPopup('${site.siteName}')">Configurer</button>
+              <button onclick="event.stopPropagation(); redirectToView('${site.siteName}')">Visualiser</button>
+            </div>
+          `;
+
+          container.appendChild(card);
+        });
+      })
+      .catch(err => console.error('Erreur lors du chargement des sites :', err));
+  });
+
+  function openNewSitePopup() {
+    // Option 1 : ouvrir le même popup de configuration mais en mode "nouveau"
+    // Il faudra adapter `submitConfig()` pour indiquer qu'on ajoute un nouveau
+    openConfigPopup('');
+  }
+</script>

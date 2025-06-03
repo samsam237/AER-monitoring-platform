@@ -1,3 +1,4 @@
 node_modules
 .trunk
 firebaseServiceAccountKey.json
+data/*

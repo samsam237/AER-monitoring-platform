@@ -1,16 +1,22 @@
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
+const fs = require('fs');
 const expressLayouts = require('express-ejs-layouts'); // Add this line
 
 const admin = require('firebase-admin');
 const serviceAccount = require('./firebaseServiceAccountKey.json');
+
+const posthogAdapter = require('./adaptateurs/posthogAdapter');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
 const app = express();
+
+app.use(express.json()); // pour parser les JSON
+app.use(express.urlencoded({ extended: true })); // pour les formulaires classiques
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -26,6 +32,8 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
+
+const SITES_FILE = path.join(__dirname, './data/sites.json');
 
 // Dummy user for demonstration
 const dummyUser = {
@@ -145,6 +153,69 @@ app.get('/sites', (req, res) => {
     // Replace with real data
     res.render('pages/sites', { user:req.user ? req.user : null, sites: ['Site 1', 'Site 2'] });
 });
+app.post('/sites/add', (req, res) => {
+    console.log (req.body)
+    const { siteName, config } = req.body;
+
+    if (!siteName || !Array.isArray(config)) {
+        return res.status(400).json({ error: 'Champs manquants ou invalides.' });
+    }
+
+    const siteData = { siteName, config };
+
+    // Lire, modifier et sauvegarder
+    fs.readFile(SITES_FILE, 'utf8', (err, data) => {
+        let sites = [];
+        if (!err && data) {
+        try {
+            sites = JSON.parse(data);
+        } catch (e) {}
+        }
+
+        // Écrase s'il existe déjà
+        const existingIndex = sites.findIndex(s => s.siteName === siteName);
+        if (existingIndex !== -1) sites[existingIndex] = siteData;
+        else sites.push(siteData);
+
+        fs.writeFile(SITES_FILE, JSON.stringify(sites, null, 2), err => {
+        if (err) {
+            console.error('Erreur enregistrement:', err);
+            return res.status(500).json({ error: 'Erreur serveur' });
+        }
+        res.json({ message: 'Site enregistré.' });
+        });
+    });
+})
+app.get('/sites/getAdd', (req, res) => {
+    const sitesPath = path.join(__dirname, './data/sites.json');
+    try {
+      const data = fs.readFileSync(sitesPath, 'utf8');
+      const sites = JSON.parse(data);
+      res.json(sites);
+    } catch (err) {
+      console.error('Erreur lors de la lecture du fichier JSON :', err);
+      res.status(500).json([]);
+    }
+});
+app.get('/sites/getAdd/:siteName', (req, res) => {
+    const siteName = req.params.siteName;
+    const sitesPath = path.join(__dirname, './data/sites.json');
+  
+    try {
+      const data = fs.readFileSync(sitesPath, 'utf8');
+      const sites = JSON.parse(data);
+      const site = sites.find(s => s.siteName === siteName);
+  
+      if (site) {
+        res.json(site);
+      } else {
+        res.status(404).json({ error: 'Site introuvable' });
+      }
+    } catch (err) {
+      console.error('Erreur lecture JSON :', err);
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
 
 app.get('/site/:siteName/data', authenticateFirebaseToken, (req, res) => {
     const siteName = req.params.siteName;
@@ -157,14 +228,20 @@ app.get('/site/:siteName/data', authenticateFirebaseToken, (req, res) => {
 app.get('/api/site/:siteName/data', authenticateFirebaseToken, async (req, res) => {
     const siteName = req.params.siteName;
   
-    // Simule des données — à remplacer par une vraie source (Firebase, MongoDB, etc.)
-    const fakeData = [
-      { date: '2024-01-01', temperature: 25, pression: 1012 },
-      { date: '2024-01-02', temperature: 27, pression: 1015 },
-      // ...
-    ];
-  
-    res.json({user:req.user ? req.user : null, data:fakeData});
+    try {
+        let data = [];
+        if (siteName === 'posthog') {
+          data = await posthogAdapter();
+        }
+        // Ajouter d'autres cas ici : fusionSolaeAdapter(), netEcoAdapter(), etc.
+        else {
+          return res.status(400).json({ error: 'Site non supporté' });
+        }
+    
+        res.json({ data });
+    } catch (err) {
+        res.status(500).json({ error: 'Erreur lors de la récupération des données' });
+    }
 });
 
 const PORT = process.env.PORT || 3000;

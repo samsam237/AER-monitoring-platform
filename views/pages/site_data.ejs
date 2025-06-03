@@ -72,10 +72,10 @@
 
   async function fetchData() {
     try {
-      const response = await fetch(`/api/site/${encodeURIComponent(siteName)}/data`);
-      if (!response.ok) throw new Error("Erreur lors du chargement des données");
-      const resp = await response.json();
-      allData = resp.data;
+      const res = await fetch(`http://localhost:3000/api/site/${siteName}/data`);
+      const json = await res.json();
+      allData = json.data; // ⚠️ bien accéder à .data si ta réponse est { data: [...] }
+
       renderTable();
     } catch (err) {
       console.error(err);
@@ -85,6 +85,11 @@
   }
 
   function renderTable() {
+    if (!!allData){
+      document.getElementById("data-table-container").innerHTML = "<p>Compte vide</p>";
+      return;
+    }
+
     const start = (currentPage - 1) * pageSize;
     const end = start + pageSize;
     const pageData = allData.slice(start, end);
