@@ -72,7 +72,7 @@
 
   async function fetchData() {
     try {
-      const res = await fetch(`http://localhost:3000/api/site/${siteName}/data`);
+      const res = await fetch(`/api/site/${siteName}/data`);
       const json = await res.json();
       allData = json.data; // ⚠️ bien accéder à .data si ta réponse est { data: [...] }
 
