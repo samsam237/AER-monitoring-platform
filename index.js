@@ -9,6 +9,15 @@ const serviceAccount = require('./firebaseServiceAccountKey.json');
 
 const posthogAdapter = require('./adaptateurs/posthogAdapter');
 
+// const posthog = require('posthog-node');
+
+/* posthog.init('YOUR_API_KEY', {
+    api_host: 'https://app.posthog.com',  // L'URL de ton instance de PostHog
+  }); */
+
+  
+// const posthogClient = new posthog.Client('phx_a8jn2Osj29tNfF3gnDupp6hPuhZSkCbybcBjxOHrGMMj28O');
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
@@ -242,6 +251,22 @@ app.get('/api/site/:siteName/data', authenticateFirebaseToken, async (req, res) 
     } catch (err) {
         res.status(500).json({ error: 'Erreur lors de la récupération des données' });
     }
+});
+
+app.post('/track-event', (req, res) => {
+    const { event } = req.body;
+  
+    // Envoie l'événement à PostHog
+    posthogClient.capture({
+      distinctId: "userId",  // ID unique de l'utilisateur (ex: ID de session ou utilisateur)
+      event: event,        // Nom de l'événement que tu veux tracker
+      properties: { ...req.body }, // Autres propriétés de l'événement
+    }).then(() => {
+      res.send('Event tracked successfully');
+    }).catch((err) => {
+      res.status(500).send('Error tracking event');
+      console.error(err);
+    });
 });
 
 const PORT = process.env.PORT || 3000;

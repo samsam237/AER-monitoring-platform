@@ -85,7 +85,9 @@
   }
 
   function renderTable() {
-    if (!!allData){
+    console.log ("allData : ");
+    console.log (allData)
+    if (allData == []){
       document.getElementById("data-table-container").innerHTML = "<p>Compte vide</p>";
       return;
     }
