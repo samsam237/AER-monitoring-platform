@@ -157,6 +157,12 @@ app.get('/alarmes', (req, res) => {
     res.render('pages/alarmes', { user:req.user ? req.user : null, alarmes: ['Alarme 1', 'Alarme 2'] });
 });
 
+// Alarms route
+app.get('/carte', (req, res) => {
+    // Replace with real data
+    res.render('pages/carte', { user:req.user ? req.user : null, alarmes: ['Alarme 1', 'Alarme 2'] });
+});
+
 // Sites route
 app.get('/sites', (req, res) => {
     // Replace with real data
