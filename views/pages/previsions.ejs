@@ -1,0 +1,95 @@
+<div class="previsions">
+  <br><br>
+  <label>Date de début : <input type="date" id="startDate"></label>
+  <label>Date de fin : <input type="date" id="endDate"></label>
+  <button onclick="filterAndDisplay()">Filtrer</button>
+
+  <table id="dataTable">
+    <thead><tr><th>Date</th><th>Prévision RNA</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <canvas id="myChart" width="800" height="300"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    let fullData = [];
+
+    async function loadData() {
+      try {
+        const response = await fetch('/api/data_prevision'); // 🔁 Remplace par ton URL
+        const json = await response.json();
+       
+        fullData = json.map(row => ({
+          date: new Date(row["date"]),
+          valeur: parseFloat(row["Prévision RNA"])
+        }));
+
+        // alert("Données JSON chargées !");
+      } catch (err) {
+        console.error("Erreur lors du chargement :", err);
+        // alert("Erreur de chargement des données.");
+      }
+    }
+
+    function filterAndDisplay() {
+      const start = new Date(document.getElementById('startDate').value);
+      const end = new Date(document.getElementById('endDate').value);
+      if (isNaN(start) || isNaN(end)) {
+        alert("Veuillez entrer des dates valides.");
+        return;
+      }
+
+      const filtered = fullData.filter(d => d.date >= start && d.date <= end);
+      const tbody = document.querySelector('#dataTable tbody');
+      tbody.innerHTML = '';
+
+      filtered.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${row.date.toISOString().split('T')[0]}</td><td>${row.valeur.toFixed(4)}</td>`;
+        tbody.appendChild(tr);
+      });
+
+      const labels = filtered.map(r => r.date.toISOString().split('T')[0]);
+      const data = filtered.map(r => r.valeur);
+
+      drawChart(labels, data);
+    }
+
+    let chart;
+    function drawChart(labels, data) {
+      const ctx = document.getElementById('myChart').getContext('2d');
+      if (chart) chart.destroy();
+
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Prévision RNA',
+            data,
+            borderColor: 'blue',
+            backgroundColor: 'rgba(0,0,255,0.1)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          scales: {
+            x: { title: { display: true, text: 'Date' }},
+            y: { title: { display: true, text: 'Valeur RNA' }}
+          }
+        }
+      });
+    }
+
+    loadData();
+</script>
+
+<style>
+    .previsions table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    .previsions th, .previsions td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    .previsions input[type="date"] { margin: 10px 10px 10px 0; }
+</style>

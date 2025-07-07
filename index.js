@@ -163,6 +163,11 @@ app.get('/carte', (req, res) => {
     res.render('pages/carte', { user:req.user ? req.user : null, alarmes: ['Alarme 1', 'Alarme 2'] });
 });
 
+app.get('/previsions', (req, res) => {
+    // Replace with real data
+    res.render('pages/previsions', { user:req.user ? req.user : null, sites: ['Site 1', 'Site 2'] });
+});
+
 // Sites route
 app.get('/sites', (req, res) => {
     // Replace with real data
@@ -258,6 +263,17 @@ app.get('/api/site/:siteName/data', authenticateFirebaseToken, async (req, res) 
         res.status(500).json({ error: 'Erreur lors de la récupération des données' });
     }
 });
+
+app.get('/api/data_prevision', authenticateFirebaseToken, async (req, res) => {
+    const data_path = path.join(__dirname, 'data/predicted.json');
+    const dataFile = fs.readFileSync(data_path, 'utf8');
+    
+    const predicted = JSON.parse(dataFile);
+
+    //console.log (predicted)
+
+    res.json([...predicted]);
+})
 
 app.post('/track-event', (req, res) => {
     const { event } = req.body;
