@@ -1,8 +1,24 @@
+<div class="sites">
+  <ul class="sites-list">
+    <li class="site">Bibia</li>
+    <li class="site">Bessounkang</li>
+    <li class="site">Koumassi</li>
+    <li class="site">Libanda</li>
+    <li class="site">Mangouma</li>
+    <li class="site">Melondo</li>
+    <li class="site">Ndokayo</li>
+    <li class="site">Ato boga</li>
+    <li class="site">Abbe yassouko</li>
+  </ul>
+</div>
+
 <div class="previsions">
-  <br><br>
-  <label>Date de début : <input type="date" id="startDate"></label>
-  <label>Date de fin : <input type="date" id="endDate"></label>
-  <button onclick="filterAndDisplay()">Filtrer</button>
+  <br>
+  <h3>site : <span class="site-title"></span></h3>
+  <br>
+  <label>Date de début : <input type="date" id="startDate" class="input-date"></label>
+  <label>Date de fin : <input type="date" id="endDate" class="input-date"></label>
+  <button onclick="filterAndDisplay()" class="button-filter">Filtrer</button>
 
   <table id="dataTable">
     <thead><tr><th>Date</th><th>Prévision RNA</th></tr></thead>
@@ -24,7 +40,7 @@
        
         fullData = json.map(row => ({
           date: new Date(row["date"]),
-          valeur: parseFloat(row["Prévision RNA"])
+          valeur: parseFloat(row["Prévision RNA"]) * 168.52
         }));
 
         // alert("Données JSON chargées !");
@@ -88,8 +104,57 @@
     loadData();
 </script>
 
+<script>
+  document.querySelectorAll(".site").forEach(elt => {
+    elt.addEventListener("click", function (){
+      document.querySelector(".site-title").innerHTML = elt.innerHTML
+      if (elt.innerHTML === "Bibia"){
+        loadData()
+      }else{
+        fullData = []
+        console.log()
+      }
+    })    
+  })
+  
+</script>
+
 <style>
     .previsions table { border-collapse: collapse; width: 100%; margin-top: 20px; }
     .previsions th, .previsions td { border: 1px solid #ccc; padding: 8px; text-align: center; }
     .previsions input[type="date"] { margin: 10px 10px 10px 0; }
+    .sites-list {display: flex; flex-direction: row; justify-content: space-around; width: 100%; height: 70px; align-items: center; list-style: none; padding: 0; margin: 0;}
+    .site, .button-filter {
+      color: #333;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      border-radius: 12px;
+      padding: .5em;
+      margin: 1em;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      width: 250px; height: 30px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      font-family: "Segoe UI", sans-serif;
+      text-align: center;
+    }
+    .site:hover, .button-filter:hover{
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    .button-filter{
+      padding: 0; border: none;
+      text-align: center;
+      width: 100px;
+    }
+    .input-date{
+      border: 2px solid #859fa1; border-radius: 4px;
+      color: #333; box-sizing: border-box;
+      height: 23px;
+    }
+    .input-date:focus{
+      border-color: #4A90E2; outline: none; box-shadow: 0 0 4px rgba(74, 144, 226, 0.4);
+    }
+    h3{
+      color: #218838;
+    }
 </style>

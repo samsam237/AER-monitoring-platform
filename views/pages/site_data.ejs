@@ -26,6 +26,13 @@
     display: inline-block;
   }
 
+  #data-table-container{
+    width: 100%;          /* ou une largeur fixe, ex: 800px */
+    overflow-x: auto;     /* active la barre de défilement horizontale si nécessaire */
+    border: 3px solid #218838; border-radius: 5px;
+    padding: 3px;
+  }
+
   #data-table {
     width: 100%;
     border-collapse: collapse;
@@ -85,13 +92,22 @@
   }
 
   function renderTable() {
-    console.log ("allData : ");
-    console.log (allData)
-    if (allData == []){
+    console.log("allData : ");
+    console.log(allData);
+    
+    if (allData.length === 0) {
       document.getElementById("data-table-container").innerHTML = "<p>Compte vide</p>";
       return;
     }
 
+    // ➤ Étape 1 : Identifier toutes les colonnes existantes dans toutes les entrées
+    const allColumnsSet = new Set();
+    allData.forEach(item => {
+      Object.keys(item).forEach(key => allColumnsSet.add(key));
+    });
+    const allColumns = Array.from(allColumnsSet);
+
+    // ➤ Pagination
     const start = (currentPage - 1) * pageSize;
     const end = start + pageSize;
     const pageData = allData.slice(start, end);
@@ -100,25 +116,23 @@
     const thead = table.querySelector("thead");
     const tbody = table.querySelector("tbody");
 
-    // Générer en-têtes
+    // ➤ Générer en-têtes
     thead.innerHTML = "";
-    if (pageData.length > 0) {
-      const headerRow = document.createElement("tr");
-      Object.keys(pageData[0]).forEach(key => {
-        const th = document.createElement("th");
-        th.textContent = key;
-        headerRow.appendChild(th);
-      });
-      thead.appendChild(headerRow);
-    }
+    const headerRow = document.createElement("tr");
+    allColumns.forEach(key => {
+      const th = document.createElement("th");
+      th.textContent = key;
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
 
-    // Générer lignes
+    // ➤ Générer lignes
     tbody.innerHTML = "";
     pageData.forEach(row => {
       const tr = document.createElement("tr");
-      Object.values(row).forEach(value => {
+      allColumns.forEach(key => {
         const td = document.createElement("td");
-        td.textContent = value;
+        td.textContent = row[key] !== undefined ? row[key] : " ";
         tr.appendChild(td);
       });
       tbody.appendChild(tr);
