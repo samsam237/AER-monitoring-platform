@@ -28,6 +28,22 @@ async function posthogAdapter() {
     distinct_id: event.distinct_id,
     ...event.properties, // Si tu veux inclure d'autres infos
   }));
+
+  /* const response = await fetch('https://app.posthog.com/api/insights', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${configObj.api_key}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      events: [{ id: "event_name" }],
+      breakdown: ["some_property"], // par exemple 'category' ou 'person'
+      date_from: "-7d",
+      interval: "day",
+    }),
+  });
+  const insightData = await response.json();
+  return insightData; */
 }
   
 module.exports = posthogAdapter;

@@ -77,6 +77,25 @@
   let currentPage = 1;
   let allData = [];
 
+  function timeAgo(timestamp) {
+    const now = Date.now(); // temps actuel en ms
+    const eventTime = new Date(timestamp).getTime(); // convertir timestamp en ms
+    const diffInSeconds = Math.floor((now - eventTime) / 1000);
+
+    if (diffInSeconds < 60) {
+      return diffInSeconds + (diffInSeconds <= 1 ? " second ago" : " seconds ago");
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return minutes + (minutes === 1 ? " minute ago" : " minutes ago");
+    } else if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return hours + (hours === 1 ? " hour ago" : " hours ago");
+    } else {
+      const days = Math.floor(diffInSeconds / 86400);
+      return days + (days === 1 ? " day ago" : " days ago");
+    }
+  }
+
   async function fetchData() {
     try {
       const res = await fetch(`/api/site/${siteName}/data`);
@@ -94,20 +113,22 @@
   function renderTable() {
     console.log("allData : ");
     console.log(allData);
-    
+
     if (allData.length === 0) {
       document.getElementById("data-table-container").innerHTML = "<p>Compte vide</p>";
       return;
     }
 
-    // ➤ Étape 1 : Identifier toutes les colonnes existantes dans toutes les entrées
-    const allColumnsSet = new Set();
-    allData.forEach(item => {
-      Object.keys(item).forEach(key => allColumnsSet.add(key));
-    });
-    const allColumns = Array.from(allColumnsSet);
+    // Colonnes que tu veux afficher, avec renommage
+    const columnsMap = {
+      event: "event",
+      distinct_id: "person",
+      $current_url: "url",
+      $browser: "browser",
+      timestamp: "time"
+    };
 
-    // ➤ Pagination
+    // Pagination
     const start = (currentPage - 1) * pageSize;
     const end = start + pageSize;
     const pageData = allData.slice(start, end);
@@ -116,23 +137,31 @@
     const thead = table.querySelector("thead");
     const tbody = table.querySelector("tbody");
 
-    // ➤ Générer en-têtes
+    // Générer en-têtes avec remplacement de _ par espace + noms personnalisés
     thead.innerHTML = "";
     const headerRow = document.createElement("tr");
-    allColumns.forEach(key => {
+    Object.values(columnsMap).forEach(displayName => {
       const th = document.createElement("th");
-      th.textContent = key;
+      th.textContent = displayName.replace(/_/g, " ").replace(/^\$/, "").toUpperCase();
       headerRow.appendChild(th);
     });
     thead.appendChild(headerRow);
 
-    // ➤ Générer lignes
+    // Générer lignes
     tbody.innerHTML = "";
     pageData.forEach(row => {
       const tr = document.createElement("tr");
-      allColumns.forEach(key => {
+      Object.keys(columnsMap).forEach(key => {
         const td = document.createElement("td");
-        td.textContent = row[key] !== undefined ? row[key] : " ";
+        let value = row[key] !== undefined ? row[key] : " ";
+        // Retirer $ devant la valeur si présent (string)
+        if (key === "timestamp" && value !== " ") {
+          value = timeAgo(value);
+        }
+        if (typeof value === "string") {
+          value = value.replace(/^\$/, "").replace(/_/g, " ");
+        }
+        td.textContent = value;
         tr.appendChild(td);
       });
       tbody.appendChild(tr);
