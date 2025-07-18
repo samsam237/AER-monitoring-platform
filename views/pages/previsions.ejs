@@ -20,12 +20,12 @@
   <label>Date de fin : <input type="date" id="endDate" class="input-date"></label>
   <button onclick="filterAndDisplay()" class="button-filter">Filtrer</button>
 
+  <canvas id="myChart" max-width="800" max-height="300"></canvas>
   <table id="dataTable">
-    <thead><tr><th>Date</th><th>Prévision RNA</th></tr></thead>
+    <thead><tr><th>Date</th><th>Prévision (kWh)</th></tr></thead>
     <tbody></tbody>
   </table>
 
-  <canvas id="myChart" width="800" height="300"></canvas>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

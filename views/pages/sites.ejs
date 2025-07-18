@@ -50,6 +50,27 @@
   </div>
 </div>
 
+<div id="jsonTableContainer">
+  <button onclick="toggleTable()">Afficher/Masquer l'aperçu de l'affichage des données</button>
+
+  <div id="jsonTableWrapper" style="display: none; margin-top: 10px;">
+    <table border="1" style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th>Paramètre mesuré</th>
+          <th>Unité</th>
+          <th>Type de mesure</th>
+          <th>Fréquence d’échantillonnage</th>
+          <th>Valeur</th>
+        </tr>
+      </thead>
+      <tbody id="jsonTableBody">
+        <!-- Les lignes seront insérées ici dynamiquement -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
 <style>
     /* Fond semi-transparent */
     .modal {
@@ -242,6 +263,63 @@
     }
 
 </style>
+
+<style>
+  #jsonTableContainer {
+    margin: 2em;
+    font-family: "Segoe UI", sans-serif;
+  }
+
+  #jsonTableContainer button {
+    padding: 0.6em 1.2em;
+    background-color: #1a237e;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  #jsonTableContainer button:hover {
+    background-color: #3949ab;
+  }
+
+  #jsonTableWrapper {
+    margin-top: 1em;
+    border-radius: 8px;
+    overflow-x: auto;
+  }
+
+  #jsonTableWrapper table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  #jsonTableWrapper th, #jsonTableWrapper td {
+    padding: 0.8em 1em;
+    border: 1px solid #ddd;
+    text-align: left;
+    font-size: 0.95em;
+  }
+
+  #jsonTableWrapper th {
+    background-color: #f0f4f8;
+    color: #2c3e50;
+    font-weight: 600;
+  }
+
+  #jsonTableWrapper tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  #jsonTableWrapper tr:hover {
+    background-color: #e3f2fd;
+  }
+</style>
+
 
 <script>
     function selectSite(name) {
@@ -458,5 +536,138 @@
     // Option 1 : ouvrir le même popup de configuration mais en mode "nouveau"
     // Il faudra adapter `submitConfig()` pour indiquer qu'on ajoute un nouveau
     openConfigPopup('');
+  }
+</script>
+
+<script>
+  const jsonData = [
+    {
+      "Paramètre mesuré": "Tension DC",
+      "Unité": "V",
+      "Type de mesure": "Analogique",
+      "Fréquence d’échantillonnage": "1 min",
+      "Valeur typique": "520 V"
+    },
+    {
+      "Paramètre mesuré": "Courant DC",
+      "Unité": "A",
+      "Type de mesure": "Analogique",
+      "Fréquence d’échantillonnage": "1 min",
+      "Valeur typique": "12.3 A"
+    },
+    {
+      "Paramètre mesuré": "Puissance DC",
+      "Unité": "W",
+      "Type de mesure": "Calculée",
+      "Fréquence d’échantillonnage": "1 min",
+      "Valeur typique": "6396 W"
+    },
+    {
+      "Paramètre mesuré": "Tension AC (phase-phase)",
+      "Unité": "V",
+      "Type de mesure": "Analogique",
+      "Fréquence d’échantillonnage": "1 min",
+      "Valeur typique": "400 V"
+    },
+    {
+      "Paramètre mesuré": "Courant AC",
+      "Unité": "A",
+      "Type de mesure": "Analogique",
+      "Fréquence d’échantillonnage": "1 min",
+      "Valeur typique": "10.5 A"
+    },
+    {
+      "Paramètre mesuré": "Puissance active AC",
+      "Unité": "kW",
+      "Type de mesure": "Calculée",
+      "Fréquence d’échantillonnage": "1 min",
+      "Valeur typique": "7.8 kW"
+    },
+    {
+      "Paramètre mesuré": "Puissance réactive",
+      "Unité": "kVAR",
+      "Type de mesure": "Calculée",
+      "Fréquence d’échantillonnage": "1 min",
+      "Valeur typique": "1.2 kVAR"
+    },
+    {
+      "Paramètre mesuré": "Fréquence réseau",
+      "Unité": "Hz",
+      "Type de mesure": "Analogique",
+      "Fréquence d’échantillonnage": "1 min",
+      "Valeur typique": "50 Hz"
+    },
+    {
+      "Paramètre mesuré": "Température module",
+      "Unité": "°C",
+      "Type de mesure": "Analogique",
+      "Fréquence d’échantillonnage": "5 min",
+      "Valeur typique": "47 °C"
+    },
+    {
+      "Paramètre mesuré": "Température ambiante",
+      "Unité": "°C",
+      "Type de mesure": "Analogique",
+      "Fréquence d’échantillonnage": "5 min",
+      "Valeur typique": "35 °C"
+    },
+    {
+      "Paramètre mesuré": "Irradiance",
+      "Unité": "W/m²",
+      "Type de mesure": "Analogique",
+      "Fréquence d’échantillonnage": "1 min",
+      "Valeur typique": "850 W/m²"
+    },
+    {
+      "Paramètre mesuré": "Etat de fonctionnement onduleur",
+      "Unité": "-",
+      "Type de mesure": "Numérique",
+      "Fréquence d’échantillonnage": "Événementiel",
+      "Valeur typique": "ON"
+    },
+    {
+      "Paramètre mesuré": "Alarme système",
+      "Unité": "-",
+      "Type de mesure": "Numérique",
+      "Fréquence d’échantillonnage": "Événementiel",
+      "Valeur typique": "Aucune alarme"
+    },
+    {
+      "Paramètre mesuré": "Energie produite journalière",
+      "Unité": "kWh",
+      "Type de mesure": "Calculée",
+      "Fréquence d’échantillonnage": "10 min",
+      "Valeur typique": "48.5 kWh"
+    },
+    {
+      "Paramètre mesuré": "Energie cumulée",
+      "Unité": "MWh",
+      "Type de mesure": "Calculée",
+      "Fréquence d’échantillonnage": "Horaire",
+      "Valeur typique": "132.7 MWh"
+    }
+  ];
+
+  function toggleTable() {
+    const wrapper = document.getElementById("jsonTableWrapper");
+    const tbody = document.getElementById("jsonTableBody");
+
+    if (wrapper.style.display === "none") {
+      // Affiche le tableau
+      tbody.innerHTML = "";
+      jsonData.forEach(item => {
+        const row = document.createElement("tr");
+        for (let key of ["Paramètre mesuré", "Unité", "Type de mesure", "Fréquence d’échantillonnage", "Valeur typique"]) {
+          const cell = document.createElement("td");
+          cell.textContent = item[key];
+          row.appendChild(cell);
+        }
+        tbody.appendChild(row);
+      });
+      wrapper.style.display = "block";
+    } else {
+      // Masque le tableau
+      wrapper.style.display = "none";
+    }
   }
 </script>
